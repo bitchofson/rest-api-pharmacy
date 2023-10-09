@@ -20,12 +20,12 @@ storage:
 drop-storage:
 	${DC} -f ${STORAGE_FILE} down
 
-.PHONY: pgadmin
-pgadmin:
+.PHONY: pgadmin4
+pgadmin4:
 	${DC} -f ${PGADMIN_FILE} up --build -d
 
-.PHONY: drop-pgadmin
-drop-pgadmin:
+.PHONY: drop-pgadmin4
+drop-pgadmin4:
 	${DC} -f ${PGADMIN_FILE} down
 
 .PHONY: logs
