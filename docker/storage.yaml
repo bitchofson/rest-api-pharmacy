@@ -1,0 +1,21 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:alpine3.17
+    container_name: pg_db_pharmacy
+    restart: always
+    ports:
+      - '5432:5432'
+    env_file:
+      - ../.env
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+    networks:
+      - backend
+
+volumes:
+  postgres-db:
+
+networks:
+  backend:
+    driver: bridge
