@@ -28,9 +28,17 @@ pgadmin4:
 drop-pgadmin4:
 	${DC} -f ${PGADMIN_FILE} down
 
-.PHONY: logs
-logs:
+.PHONY: logs-all
+logs-all:
 	${DC} -f ${STORAGE_FILE} -f ${PGADMIN_FILE} logs -f
+
+.PHONY: logs-pgadmin4
+logs-pgadmin4:
+	${DC} -f ${PGADMIN_FILE} logs -f
+
+.PHONY: logs-storage
+logs-storage:
+	${DC} -f ${STORAGE_FILE} logs -f
 
 .PHONY: prune
 prune:
