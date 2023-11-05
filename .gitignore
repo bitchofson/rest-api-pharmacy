@@ -1,4 +1,8 @@
+# files
+.env
+
+# directories
 __pycache__/
 .vscode/
-.env
+.venv/
 sql/

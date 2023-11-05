@@ -1,16 +1,25 @@
 DC = docker compose
 PRUNE = docker system prune
+
 STORAGE_FILE = docker/storage.yaml
 PGADMIN_FILE = docker/pgadmin.yaml
-
+APP_FILE	 = docker/app.yaml
 
 .PHONY: all
 all:
-	${DC} -f ${STORAGE_FILE} -f ${PGADMIN_FILE} up --build -d
+	${DC} -f ${APP_FILE} -f ${STORAGE_FILE} -f ${PGADMIN_FILE} up --build -d
 
 .PHONY: drop-all
 drop-all:
-	${DC} -f ${STORAGE_FILE} -f ${PGADMIN_FILE} down
+	${DC} -f ${APP_FILE} -f ${STORAGE_FILE} -f ${PGADMIN_FILE} down
+
+.PHONY: app
+app:
+	${DC} -f ${APP_FILE} up --build -d
+
+.PHONY: drop-app
+drop-app:
+	${DC} -f ${APP_FILE} down
 
 .PHONY: storage
 storage:
@@ -30,7 +39,11 @@ drop-pgadmin4:
 
 .PHONY: logs-all
 logs-all:
-	${DC} -f ${STORAGE_FILE} -f ${PGADMIN_FILE} logs -f
+	${DC} -f ${APP_FILE} -f ${STORAGE_FILE} -f ${PGADMIN_FILE} logs -f
+
+.PHONY: logs-app
+logs-app:
+	${DC} -f ${APP_FILE} logs -f
 
 .PHONY: logs-pgadmin4
 logs-pgadmin4:

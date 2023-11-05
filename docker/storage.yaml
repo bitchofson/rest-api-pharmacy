@@ -1,20 +1,20 @@
 version: '3.9'
 services:
-  postgres_pharmacy:
+  postgres-pharmacy:
     image: postgres:alpine3.17
-    container_name: storage_pharmacy
+    container_name: db_postgres_pharmacy
     restart: always
     ports:
       - '5432:5432'
     env_file:
       - ../.env
     volumes:
-      - postgres-pharmacy-db:/var/lib/postgresql/data
+      - postgres_data_pharmacy:/var/lib/postgresql/data
     networks:
       - backend
 
 volumes:
-  postgres-pharmacy-db:
+  postgres_data_pharmacy:
 
 networks:
   backend:
