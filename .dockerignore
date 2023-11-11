@@ -1,9 +1,9 @@
 # files
 .gitignore
-.env
 
 # directories
 __pycache__/
 .vscode/
 .venv/
 .git/
+sql/

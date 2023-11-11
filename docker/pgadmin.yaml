@@ -9,12 +9,12 @@ services:
     env_file:
       - ../.env
     volumes:
-      - pgadmin4-data:/var/lib/postgresql/data
+      - pgadmin4_data:/var/lib/postgresql/data
     networks:
       - backend
 
 volumes:
-  pgadmin4-data:
+  pgadmin4_data:
 
 networks:
   backend:

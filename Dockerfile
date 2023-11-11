@@ -8,12 +8,14 @@ WORKDIR /usr/src/rest-api-pharmacy
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNTBUFFERED 1
 
+# update system and install dev package
+RUN apt update && apt install -y python3-dev
+
 # copy requirements file
 COPY ./requirements.txt /usr/src/rest-api-pharmacy/requirements.txt
 
 # install requirements
-RUN apt update && apt install -y python3-dev \
-    && pip install --upgrade pip setuptools wheel \
+RUN pip install --upgrade pip setuptools wheel \
     && pip install --no-cache-dir -r /usr/src/rest-api-pharmacy/requirements.txt
 
 # listen port for container
