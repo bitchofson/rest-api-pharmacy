@@ -1,9 +1,13 @@
 import uuid
+from typing import TYPE_CHECKING
 
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import text, Text, ForeignKey
 from .base import Base, Condition
 
+if TYPE_CHECKING:
+    from .release_form import ReleaseFormORM
+    from .manufacturer import ManufacturerORM
 
 class DrugORM(Base):
     __tablename__='drug'
@@ -19,3 +23,6 @@ class DrugORM(Base):
     manufacturer_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey('manufacturer.id', ondelete='SET NULL')
     )
+
+    release_form: Mapped['ReleaseFormORM'] = relationship(back_populates='release_form')
+    manufacturer: Mapped['ManufacturerORM'] = relationship(back_populates='manufacturer')
