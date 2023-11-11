@@ -1,8 +1,8 @@
 """Create drug table
 
-Revision ID: e7bbe06cb7fc
+Revision ID: 060324dddb61
 Revises: bff5c5081290
-Create Date: 2023-11-11 21:49:08.468505
+Create Date: 2023-11-11 22:58:04.890049
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'e7bbe06cb7fc'
+revision: str = '060324dddb61'
 down_revision: Union[str, None] = 'bff5c5081290'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -27,8 +27,8 @@ def upgrade() -> None:
     sa.Column('leave_condition', sa.Enum('reception_yes', 'reception_no', name='condition'), nullable=False),
     sa.Column('release_form_id', sa.Integer(), nullable=False),
     sa.Column('manufacturer_id', sa.Uuid(), nullable=False),
-    sa.ForeignKeyConstraint(['manufacturer_id'], ['manufacturer.id'], ondelete='SET NULL'),
-    sa.ForeignKeyConstraint(['release_form_id'], ['release_form.id'], ondelete='SET NULL'),
+    sa.ForeignKeyConstraint(['manufacturer_id'], ['manufacturer.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['release_form_id'], ['release_form.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###

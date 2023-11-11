@@ -15,4 +15,8 @@ class ManufacturerORM(Base):
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, server_default=text('gen_random_uuid()'))
     name: Mapped[str] = mapped_column(unique=True)
 
-    drug: Mapped[list['DrugORM']] = relationship(back_populates='drug')
+    drug: Mapped[list['DrugORM' | None]] = relationship(
+        back_populates='drug', 
+        cascade='all, delete', 
+        passive_deletes=True,
+    )

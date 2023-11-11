@@ -13,4 +13,8 @@ class ReleaseFormORM(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement='auto')
     form: Mapped[str] = mapped_column(unique=True)
 
-    drug: Mapped[list['DrugORM']] = relationship(back_populates='release_form')
+    drug: Mapped[list['DrugORM']] = relationship(
+        back_populates='release_form',
+        cascade='all, delete',
+        passive_deletes=True,
+    )

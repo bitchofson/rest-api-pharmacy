@@ -18,10 +18,10 @@ class DrugORM(Base):
     leave_condition: Mapped[Condition]
 
     release_form_id: Mapped[int] = mapped_column(
-        ForeignKey('release_form.id', ondelete='SET NULL')
+        ForeignKey('release_form.id', ondelete='CASCADE')
     )
     manufacturer_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey('manufacturer.id', ondelete='SET NULL')
+        ForeignKey('manufacturer.id', ondelete='CASCADE')
     )
 
     release_form: Mapped['ReleaseFormORM'] = relationship(back_populates='release_form')
