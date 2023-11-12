@@ -24,5 +24,5 @@ class DrugORM(Base):
         ForeignKey('manufacturer.id', ondelete='CASCADE')
     )
 
-    release_form: Mapped['ReleaseFormORM'] = relationship(back_populates='release_form')
-    manufacturer: Mapped['ManufacturerORM'] = relationship(back_populates='manufacturer')
+    release_form: Mapped['ReleaseFormORM'] = relationship(back_populates='drug')
+    manufacturer: Mapped['ManufacturerORM'] = relationship(back_populates='drug')
