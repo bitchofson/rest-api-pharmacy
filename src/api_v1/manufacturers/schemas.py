@@ -5,6 +5,7 @@ from pydantic import BaseModel, ConfigDict
 
 class ManufacturerBaseSchema(BaseModel):
     name: str
+    adress: str
 
 class ManufacturerSchema(ManufacturerBaseSchema):
     model_config = ConfigDict(from_attributes=True)
@@ -18,3 +19,4 @@ class ManufacturerUpdateSchema(ManufacturerCreateSchema):
 
 class ManufacturerUpdatePartialSchema(ManufacturerCreateSchema):
     name: str | None = None
+    adress: str | None = None

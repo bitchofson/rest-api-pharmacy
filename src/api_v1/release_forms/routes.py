@@ -5,7 +5,7 @@ from core import db_helper
 
 from . import crud
 from .schemas import ReleaseFormSchema, ReleaseFormCreateSchema, ReleaseFormUpdateSchema, ReleaseFormUpdatePartialSchema
-from .dependencies import release_form_by_id
+from ..dependencies import release_form_by_id
 
 router = APIRouter(tags=['Release Forms'])
 

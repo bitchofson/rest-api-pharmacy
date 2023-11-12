@@ -5,7 +5,7 @@ from core import db_helper
 
 from . import crud
 from .schemas import ManufacturerSchema, ManufacturerCreateSchema, ManufacturerUpdateSchema, ManufacturerUpdatePartialSchema
-from .dependencies import manufacturer_by_id
+from ..dependencies import manufacturer_by_id
 
 router = APIRouter(tags=['Manufacturers'])
 
