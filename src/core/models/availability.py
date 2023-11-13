@@ -8,6 +8,7 @@ from .base import Base
 
 if TYPE_CHECKING:
     from .drug import DrugORM
+    from .pharmacy import PharmacyORM
 
 class AvailabilityORM(Base):
     __tablename__='availability'
@@ -25,6 +26,11 @@ class AvailabilityORM(Base):
         back_populates='availability',
         cascade='all, delete', 
         passive_deletes=True,
+    )
+
+    pharmacy: Mapped[list['PharmacyORM']] = relationship(
+        back_populates='availability',
+        secondary='available_in_pharmacy'
     )
 
     
