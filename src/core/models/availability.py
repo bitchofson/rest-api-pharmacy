@@ -1,9 +1,13 @@
 import uuid
+from typing import TYPE_CHECKING
 
-from sqlalchemy.orm import Mapped, mapped_column
+
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import text, Numeric, ForeignKey
 from .base import Base
 
+if TYPE_CHECKING:
+    from .drug import DrugORM
 
 class AvailabilityORM(Base):
     __tablename__='availability'
@@ -16,3 +20,11 @@ class AvailabilityORM(Base):
         ForeignKey('drug.id', ondelete='CASCADE'), 
         unique=True,
     )
+
+    drug: Mapped[list['DrugORM']] = relationship(
+        back_populates='availability',
+        cascade='all, delete', 
+        passive_deletes=True,
+    )
+
+    

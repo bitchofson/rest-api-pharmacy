@@ -8,6 +8,7 @@ from .base import Base, Condition
 if TYPE_CHECKING:
     from .release_form import ReleaseFormORM
     from .manufacturer import ManufacturerORM
+    from .availability import AvailabilityORM
 
 class DrugORM(Base):
     __tablename__='drug'
@@ -26,3 +27,4 @@ class DrugORM(Base):
 
     release_form: Mapped['ReleaseFormORM'] = relationship(back_populates='drug')
     manufacturer: Mapped['ManufacturerORM'] = relationship(back_populates='drug')
+    availability: Mapped['AvailabilityORM'] = relationship(back_populates='drug')
