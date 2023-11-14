@@ -5,11 +5,13 @@ from fastapi import Path, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core import db_helper
-from core.models import ManufacturerORM, ReleaseFormORM, DrugORM
+from core.models import ManufacturerORM, ReleaseFormORM, DrugORM, AvailabilityORM, PharmacyORM
 
 from .release_forms import crud as crud_release_form
 from .manufacturers import crud as crud_manufacturer
 from .drugs import crud as crud_drug
+from .availabilitys import crud as crud_availability
+from .pharmacys import crud as crud_pharmacy
 
 async def manufacturer_by_id(
     manufacturer_id: Annotated[uuid.UUID, Path], 
@@ -48,4 +50,30 @@ async def drug_by_id(
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail=f'Drug with {drug_id} id not found!'
+    )
+
+async def availability_by_id(
+        availability_id: Annotated[uuid.UUID, Path],
+        session: AsyncSession = Depends(db_helper.scoped_session_dependency)
+) -> AvailabilityORM:
+    availability = await crud_availability.get_availability(session=session, availability_id=availability_id)
+    if availability is not None:
+        return availability
+    
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail=f'Availability with {availability_id} id not found!'
+    )
+
+async def pharmacy_by_id(
+        pharmacy_id: Annotated[uuid.UUID, Path],
+        session: AsyncSession = Depends(db_helper.scoped_session_dependency)
+) -> PharmacyORM:
+    pharmacy = await crud_pharmacy.get_pharmacy(session=session, pharmacy_id=pharmacy_id)
+    if pharmacy is not None:
+        return pharmacy
+    
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail=f'Pharmacy with {pharmacy_id} id not found!'
     )

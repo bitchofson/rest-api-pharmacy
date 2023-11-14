@@ -12,6 +12,7 @@ class PharmacyORM(Base):
     __tablename__='pharmacy'
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, server_default=text('gen_random_uuid()'))
+    name: Mapped[str]
     adress: Mapped[str]
     opening: Mapped[str]
 

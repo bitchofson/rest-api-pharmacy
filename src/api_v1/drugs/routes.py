@@ -25,7 +25,7 @@ async def get_drug(
              status_code=status.HTTP_201_CREATED)
 async def create_drug(
     drug: DrugCreateSchema,
-    session: AsyncSession = Depends(db_helper.scoped_session_dependency)
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
     return await crud.create_drug(session=session, drug_in=drug)
 
