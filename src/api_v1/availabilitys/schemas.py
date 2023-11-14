@@ -11,9 +11,9 @@ class AvailabilityBaseSchema(BaseModel):
 
 
 class AvailabilitySchema(AvailabilityBaseSchema):
+    id: uuid.UUID
     model_config = ConfigDict(from_attributes=True)
     drug: 'DrugSchema'
-    id: uuid.UUID
 
 class AvailabilityCreateSchema(AvailabilityBaseSchema):
     drug_id: uuid.UUID

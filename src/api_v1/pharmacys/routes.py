@@ -4,18 +4,24 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core import db_helper
 
 from . import crud
-from .schemas import PharmacySchema, PharmacyCreateSchema, PharmacyUpdateSchema, PharmacyUpdatePartialSchema
+from .schemas import (
+    PharmacySchema,
+    PharmacyCreateSchema, 
+    PharmacyUpdateSchema, 
+    PharmacyUpdatePartialSchema,
+    PharmacyWithvAvailabilitySchema
+)
 from ..dependencies import pharmacy_by_id
 
 router = APIRouter(tags=['Pharmacys'])
 
-@router.get('/', response_model=list[PharmacySchema])
+@router.get('/', response_model=list[PharmacyWithvAvailabilitySchema])
 async def get_pharmacys(
     session: AsyncSession = Depends(db_helper.scoped_session_dependency)
 ):
     return await crud.get_pharmacys(session=session)
 
-@router.get('/{pharmacy_id}', response_model=PharmacySchema)
+@router.get('/{pharmacy_id}', response_model=PharmacyWithvAvailabilitySchema)
 async def get_pharmacy(
     pharmacy: PharmacySchema = Depends(pharmacy_by_id)
 ):

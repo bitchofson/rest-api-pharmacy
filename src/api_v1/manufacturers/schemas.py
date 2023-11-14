@@ -8,8 +8,8 @@ class ManufacturerBaseSchema(BaseModel):
     adress: str
 
 class ManufacturerSchema(ManufacturerBaseSchema):
-    model_config = ConfigDict(from_attributes=True)
     id: uuid.UUID
+    model_config = ConfigDict(from_attributes=True)
 
 class ManufacturerCreateSchema(ManufacturerBaseSchema):
     pass

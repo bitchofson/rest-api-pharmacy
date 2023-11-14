@@ -6,12 +6,28 @@ from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.models.pharmacy import PharmacyORM
+from core.models.availability import AvailabilityORM
+from core.models.drug import DrugORM
 
-from .schemas import PharmacyCreateSchema, PharmacyUpdateSchema, PharmacyUpdatePartialSchema
-
+from .schemas import (
+    PharmacyCreateSchema, 
+    PharmacyUpdateSchema, 
+    PharmacyUpdatePartialSchema,
+)
 
 async def get_pharmacys(session: AsyncSession) -> list[PharmacyORM]:
-    stmt = select(PharmacyORM).order_by(PharmacyORM.id)
+    stmt = (
+        select(PharmacyORM)
+            .options(
+                selectinload(PharmacyORM.availability).options(
+                    selectinload(AvailabilityORM.drug).options(
+                        selectinload(DrugORM.release_form),
+                        selectinload(DrugORM.manufacturer)
+                    )
+                )
+            )
+    )
+
     result: Result = await session.execute(stmt)
     result_orm = result.scalars().all()
     return list(result_orm)
@@ -20,7 +36,21 @@ async def get_pharmacy(
         session: AsyncSession,
         pharmacy_id: uuid.UUID
 ) -> PharmacyORM | None:
-    return await session.get(PharmacyORM, pharmacy_id)
+    stmt = (
+        select(PharmacyORM)
+            .options(
+                selectinload(PharmacyORM.availability).options(
+                    selectinload(AvailabilityORM.drug).options(
+                        selectinload(DrugORM.release_form),
+                        selectinload(DrugORM.manufacturer)
+                    )
+                )
+            ).where(PharmacyORM.id == pharmacy_id)
+    )
+
+    result: Result = await session.execute(stmt)
+    result_orm = result.scalar_one_or_none()
+    return result_orm
 
 async def create_pharmacy(
         session: AsyncSession,
@@ -48,3 +78,4 @@ async def delete_pharmacy(
 ) -> None:
     await session.delete(pharmacy)
     await session.commit();
+    

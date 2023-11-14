@@ -12,10 +12,10 @@ class DrugBaseSchema(BaseModel):
     leave_condition: Condition
 
 class DrugSchema(DrugBaseSchema):
+    id: uuid.UUID
     model_config = ConfigDict(from_attributes=True)
     release_form: 'ReleaseFormSchema'
     manufacturer: 'ManufacturerSchema'
-    id: uuid.UUID
 
 class DrugCreateSchema(DrugBaseSchema):
     release_form_id: int
