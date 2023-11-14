@@ -1,4 +1,4 @@
-__all_ ={
+__all__ ={
     'DatabaseHelper',
     'db_helper'
 }

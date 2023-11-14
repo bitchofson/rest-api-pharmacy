@@ -9,10 +9,10 @@ from core.models.pharmacy import PharmacyORM
 from core.models.availability import AvailabilityORM
 from core.models.drug import DrugORM
 
-from .schemas import (
+from ..availability_pharmacys_schemes import (
     PharmacyCreateSchema, 
     PharmacyUpdateSchema, 
-    PharmacyUpdatePartialSchema,
+    PharmacyUpdatePartialSchema
 )
 
 async def get_pharmacys(session: AsyncSession) -> list[PharmacyORM]:
@@ -78,4 +78,22 @@ async def delete_pharmacy(
 ) -> None:
     await session.delete(pharmacy)
     await session.commit();
-    
+
+async def add_available_in_pharmacy(
+        pharmacy_id: uuid.UUID,
+        session: AsyncSession,
+        availability: AvailabilityORM,
+):
+    pharmacy = await get_pharmacy(session, pharmacy_id=pharmacy_id)
+    pharmacy.availability.append(availability)
+    await session.commit()
+    return pharmacy
+
+async def delete_pharmacy_from_available(
+        pharmacy_id: uuid.UUID,
+        session: AsyncSession,
+        availability: AvailabilityORM,
+):
+    pharmacy = await get_pharmacy(session, pharmacy_id=pharmacy_id)
+    pharmacy.availability.remove(availability)
+    await session.commit()

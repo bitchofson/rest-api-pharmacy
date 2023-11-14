@@ -6,21 +6,23 @@ from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.models.availability import AvailabilityORM
+from core.models.pharmacy import PharmacyORM
 from core.models.drug import DrugORM
 
-from .schemas import AvailabilityCreateSchema, AvailabilityUpdateSchema, AvailabilityUpdatePartialSchema
+from ..availability_pharmacys_schemes import AvailabilityCreateSchema, AvailabilityUpdateSchema, AvailabilityUpdatePartialSchema
 
 async def get_availabilitys(session: AsyncSession) -> list[AvailabilityORM]:
     stmt = (
         select(AvailabilityORM)
-        .options(
-            selectinload(AvailabilityORM.drug)
             .options(
-                selectinload(DrugORM.release_form),
-                selectinload(DrugORM.manufacturer)
-            ),
+                selectinload(AvailabilityORM.drug)
+                .options(
+                    selectinload(DrugORM.release_form),
+                    selectinload(DrugORM.manufacturer)
+                ),
+                selectinload(AvailabilityORM.pharmacy)
+                )
             )
-    )
 
     result: Result = await session.execute(stmt)
     result_orm = result.scalars().all()
@@ -32,13 +34,14 @@ async def get_availability(
 ) -> AvailabilityORM | None:
     stmt = (
         select(AvailabilityORM)
-        .options(
-                selectinload(AvailabilityORM.drug).
-                options(
-                    selectinload(DrugORM.release_form),
-                    selectinload(DrugORM.manufacturer)
-                )
-        ).where(AvailabilityORM.id == availability_id)
+            .options(
+                selectinload(AvailabilityORM.drug)
+                    .options(
+                        selectinload(DrugORM.release_form),
+                        selectinload(DrugORM.manufacturer)
+                    ),
+                selectinload(AvailabilityORM.pharmacy)
+            ).where(AvailabilityORM.id == availability_id)
     )
 
     result: Result = await session.execute(stmt)
@@ -71,3 +74,22 @@ async def delete_availability(
 ) -> None:
     await session.delete(availability)
     await session.commit();
+
+async def add_pharmacy_in_available(
+        availability_id: uuid.UUID,
+        session: AsyncSession,
+        pharmacy: PharmacyORM,
+):
+    availability = await get_availability(session, availability_id)
+    availability.pharmacy.append(pharmacy)
+    await session.commit()
+    return availability
+
+async def delete_pharmacy_from_available(
+        availability_id: uuid.UUID,
+        session: AsyncSession,
+        pharmacy: PharmacyORM,
+):
+    availability = await get_availability(session, availability_id)
+    availability.pharmacy.remove(pharmacy)
+    await session.commit()

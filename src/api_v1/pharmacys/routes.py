@@ -1,29 +1,31 @@
+import uuid
 from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core import db_helper
 
 from . import crud
-from .schemas import (
+from ..availability_pharmacys_schemes import (
     PharmacySchema,
     PharmacyCreateSchema, 
     PharmacyUpdateSchema, 
     PharmacyUpdatePartialSchema,
-    PharmacyWithvAvailabilitySchema
+    PharmacyWithAvailabilitySchema,
+    AvailabilitySchema
 )
-from ..dependencies import pharmacy_by_id
+from ..dependencies import pharmacy_by_id, availability_by_id
 
 router = APIRouter(tags=['Pharmacys'])
 
-@router.get('/', response_model=list[PharmacyWithvAvailabilitySchema])
+@router.get('/', response_model=list[PharmacyWithAvailabilitySchema])
 async def get_pharmacys(
     session: AsyncSession = Depends(db_helper.scoped_session_dependency)
 ):
     return await crud.get_pharmacys(session=session)
 
-@router.get('/{pharmacy_id}', response_model=PharmacyWithvAvailabilitySchema)
+@router.get('/{pharmacy_id}', response_model=PharmacyWithAvailabilitySchema)
 async def get_pharmacy(
-    pharmacy: PharmacySchema = Depends(pharmacy_by_id)
+    pharmacy: PharmacyWithAvailabilitySchema = Depends(pharmacy_by_id)
 ):
     return pharmacy
 
@@ -67,3 +69,30 @@ async def delete_pharmacy(
     session: AsyncSession = Depends(db_helper.scoped_session_dependency)
 ):
     await crud.delete_pharmacy(session=session, pharmacy=pharmacy)
+
+@router.post('/{pharmacy_id}/{availability_id}', 
+             response_model=PharmacyWithAvailabilitySchema,
+             status_code=status.HTTP_201_CREATED)
+async def add_availability_in_pharmacy(
+    pharmacy_id: uuid.UUID,
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    availability: AvailabilitySchema = Depends(availability_by_id)
+):
+    return await crud.add_available_in_pharmacy(
+        pharmacy_id=pharmacy_id,
+        session=session,
+        availability=availability
+    )
+
+@router.delete('/{availability_id}/{pharmacy_id}', 
+               status_code=status.HTTP_204_NO_CONTENT)
+async def delete_availability_from_pharmacy(
+    pharmacy_id: uuid.UUID,
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    availability: AvailabilitySchema = Depends(availability_by_id)
+):
+    await crud.delete_pharmacy_from_available(
+        pharmacy_id=pharmacy_id,
+        session=session,
+        availability=availability
+    )
