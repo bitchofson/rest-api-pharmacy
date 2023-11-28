@@ -1,5 +1,6 @@
 import uuid
 from fastapi import APIRouter, status, Depends
+from fastapi_pagination import Page, paginate
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core import db_helper
@@ -17,11 +18,11 @@ from ..dependencies import availability_by_id, pharmacy_by_id
 
 router = APIRouter(tags=['Availabilitys'])
 
-@router.get('/', response_model=list[AvailabilityInPharmacySchema])
+@router.get('/', response_model=Page[AvailabilityInPharmacySchema])
 async def get_availabilitys(
     session: AsyncSession = Depends(db_helper.scoped_session_dependency)
 ):
-    return await crud.get_availabilitys(session=session)
+    return paginate(await crud.get_availabilitys(session=session))
 
 @router.get('/{availability_id}', response_model=AvailabilityInPharmacySchema)
 async def get_availabilitys(
@@ -72,7 +73,7 @@ async def delete_availability(
     await crud.delete_availability(session=session, availability=availability)
 
 
-@router.post('/{availability_id}/{pharmacy_id}', 
+@router.post('/{availability_id}/pharmacy/{pharmacy_id}', 
              response_model=AvailabilityInPharmacySchema,
              status_code=status.HTTP_201_CREATED)
 async def add_pharmacy_in_availability(
@@ -85,7 +86,7 @@ async def add_pharmacy_in_availability(
         session=session, 
         pharmacy=pharmacy)
 
-@router.delete('/{availability_id}/{pharmacy_id}', 
+@router.delete('/{availability_id}/pharmacy/{pharmacy_id}', 
                status_code=status.HTTP_204_NO_CONTENT)
 async def delete_pharmacy_from_availability(
     availability_id: uuid.UUID,

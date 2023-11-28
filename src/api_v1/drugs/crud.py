@@ -1,7 +1,7 @@
 import uuid
 
 from sqlalchemy import select
-from sqlalchemy.orm import joinedload, selectinload
+from sqlalchemy.orm import selectinload
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -63,4 +63,4 @@ async def delete_drug(
         drug: DrugORM
 ) -> None:
     await session.delete(drug)
-    await session.commit();
+    await session.commit()

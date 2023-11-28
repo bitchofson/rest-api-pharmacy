@@ -1,4 +1,5 @@
 from fastapi import APIRouter, status, Depends
+from fastapi_pagination import Page, paginate
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core import db_helper
@@ -9,11 +10,11 @@ from ..dependencies import manufacturer_by_id
 
 router = APIRouter(tags=['Manufacturers'])
 
-@router.get('/', response_model=list[ManufacturerSchema])
+@router.get('/', response_model=Page[ManufacturerSchema])
 async def get_manufacturers(
     session: AsyncSession = Depends(db_helper.scoped_session_dependency)
 ):
-    return await crud.get_manufacturers(session=session)
+    return paginate(await crud.get_manufacturers(session=session))
 
 @router.post('/', response_model=ManufacturerSchema,
              status_code=status.HTTP_201_CREATED)

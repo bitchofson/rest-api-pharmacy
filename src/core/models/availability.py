@@ -18,14 +18,11 @@ class AvailabilityORM(Base):
     price: Mapped[float] = mapped_column(Numeric)
 
     drug_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey('drug.id', ondelete='CASCADE'), 
-        unique=True,
+        ForeignKey('drug.id', ondelete='CASCADE'), unique=False
     )
 
     drug: Mapped[list['DrugORM']] = relationship(
-        back_populates='availability',
-        cascade='all, delete', 
-        passive_deletes=True,
+        back_populates='availability'
     )
 
     pharmacy: Mapped[list['PharmacyORM']] = relationship(

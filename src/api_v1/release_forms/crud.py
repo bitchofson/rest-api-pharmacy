@@ -45,4 +45,4 @@ async def delete_release_form(
         release_form: ReleaseFormORM
 ) -> None:
     await session.delete(release_form)
-    await session.commit();
+    await session.commit()

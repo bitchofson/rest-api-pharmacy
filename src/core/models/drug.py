@@ -27,4 +27,7 @@ class DrugORM(Base):
 
     release_form: Mapped['ReleaseFormORM'] = relationship(back_populates='drug')
     manufacturer: Mapped['ManufacturerORM'] = relationship(back_populates='drug')
-    availability: Mapped['AvailabilityORM'] = relationship(back_populates='drug')
+    availability: Mapped['AvailabilityORM'] = relationship(
+        back_populates='drug',
+        cascade='all, delete',
+        passive_deletes=True,)

@@ -47,4 +47,4 @@ async def delete_manufacturer(
         manufacturer: ManufacturerORM
 ) -> None:
     await session.delete(manufacturer)
-    await session.commit();
+    await session.commit()
