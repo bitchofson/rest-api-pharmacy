@@ -1,7 +1,7 @@
 import uuid
 
-from sqlalchemy import select
-from sqlalchemy.orm import joinedload, selectinload
+from sqlalchemy import select, or_
+from sqlalchemy.orm import selectinload
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -11,7 +11,7 @@ from core.models.drug import DrugORM
 
 from ..availability_pharmacys_schemes import AvailabilityCreateSchema, AvailabilityUpdateSchema, AvailabilityUpdatePartialSchema
 
-async def get_availabilitys(session: AsyncSession) -> list[AvailabilityORM]:
+async def get_availabilitys(session: AsyncSession, filter: str) -> list[AvailabilityORM]:
     stmt = (
         select(AvailabilityORM)
             .options(
@@ -23,6 +23,16 @@ async def get_availabilitys(session: AsyncSession) -> list[AvailabilityORM]:
                 selectinload(AvailabilityORM.pharmacy)
                 )
             )
+
+    if filter is not None and filter != 'null':
+        criteria = dict(x.split("*") for x in filter.split('-'))
+        print(criteria)
+        for attr, value in criteria.items():
+                if attr == 'price':
+                    if value is not None and value != '':
+                        search = float(value)
+                        stmt = stmt.where(AvailabilityORM.price == search)        
+        
 
     result: Result = await session.execute(stmt)
     result_orm = result.scalars().all()

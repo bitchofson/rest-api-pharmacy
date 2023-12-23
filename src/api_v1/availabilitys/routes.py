@@ -1,5 +1,5 @@
 import uuid
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, status, Depends, Query
 from fastapi_pagination import Page, paginate
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -20,10 +20,11 @@ router = APIRouter(tags=['Availabilitys'])
 
 @router.get('/', response_model=Page[AvailabilityInPharmacySchema])
 async def get_availabilitys(
-    session: AsyncSession = Depends(db_helper.scoped_session_dependency)
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    filter: str = Query(None, alias="filter")
 ):
-    return paginate(await crud.get_availabilitys(session=session))
-
+    return paginate(await crud.get_availabilitys(session=session, filter=filter))
+    
 @router.get('/{availability_id}', response_model=AvailabilityInPharmacySchema)
 async def get_availabilitys(
     availability: AvailabilityInPharmacySchema = Depends(availability_by_id)

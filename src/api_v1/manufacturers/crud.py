@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import select
+from sqlalchemy import select, or_
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -9,8 +9,19 @@ from core.models.manufacturer import ManufacturerORM
 from .schemas import ManufacturerCreateSchema, ManufacturerUpdateSchema, ManufacturerUpdatePartialSchema
 
 
-async def get_manufacturers(session: AsyncSession) -> [ManufacturerORM]:
+async def get_manufacturers(session: AsyncSession, filter: str) -> [ManufacturerORM]:
     stmt = select(ManufacturerORM).order_by(ManufacturerORM.id)
+    if filter is not None and filter != 'null':
+            criteria = dict(x.split("*") for x in filter.split('-'))
+            criteria_list = []
+
+            for attr, value in criteria.items():
+                _attr = getattr(ManufacturerORM, attr)
+                search = '%{}%'.format(value)
+                criteria_list.append(_attr.like(search))
+                
+            stmt = stmt.filter(or_(*criteria_list))
+    
     result: Result = await session.execute(stmt)
     manufacturers = result.scalars().all()
     return list(manufacturers)

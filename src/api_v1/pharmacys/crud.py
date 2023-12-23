@@ -1,7 +1,7 @@
 import uuid
 
-from sqlalchemy import select
-from sqlalchemy.orm import joinedload, selectinload
+from sqlalchemy import select, or_
+from sqlalchemy.orm import selectinload
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -15,7 +15,7 @@ from ..availability_pharmacys_schemes import (
     PharmacyUpdatePartialSchema
 )
 
-async def get_pharmacys(session: AsyncSession) -> list[PharmacyORM]:
+async def get_pharmacys(session: AsyncSession, filter: str) -> list[PharmacyORM]:
     stmt = (
         select(PharmacyORM)
             .options(
@@ -27,6 +27,17 @@ async def get_pharmacys(session: AsyncSession) -> list[PharmacyORM]:
                 )
             )
     )
+
+    if filter is not None and filter != 'null':
+        criteria = dict(x.split("*") for x in filter.split('-'))
+        print(criteria)
+        criteria_list = []
+
+        for attr, value in criteria.items():
+                search = '%{}%'.format(value)
+                criteria_list.append(getattr(PharmacyORM, attr).like(search))
+        
+        stmt = stmt.filter(or_(*criteria_list))
 
     result: Result = await session.execute(stmt)
     result_orm = result.scalars().all()

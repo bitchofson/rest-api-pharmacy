@@ -1,5 +1,5 @@
-from fastapi import APIRouter, status, Depends
-from fastapi_pagination import Page, Params, paginate
+from fastapi import APIRouter, status, Depends, Query
+from fastapi_pagination import Page, paginate
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core import db_helper
@@ -12,9 +12,10 @@ router = APIRouter(tags=['Release Forms'])
 
 @router.get('/', response_model=Page[ReleaseFormSchema])
 async def get_release_forms(
-    session: AsyncSession = Depends(db_helper.scoped_session_dependency)
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    filter: str = Query(None, alias="filter")
     ):
-    return paginate(await crud.get_release_forms(session=session))
+    return paginate(await crud.get_release_forms(session=session, filter=filter))
 
 @router.post('/', response_model=ReleaseFormSchema,
              status_code=status.HTTP_201_CREATED)

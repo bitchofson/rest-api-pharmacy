@@ -1,4 +1,5 @@
-from fastapi import APIRouter, status, Depends
+from typing import List
+from fastapi import APIRouter, status, Depends, Query
 from fastapi_pagination import Page, paginate
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -12,9 +13,16 @@ router = APIRouter(tags=['Drugs'])
 
 @router.get('/', response_model=Page[DrugSchema])
 async def get_drugs(
-    session: AsyncSession = Depends(db_helper.scoped_session_dependency)
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    filter: str = Query(None, alias="filter")
 ):
-    return paginate(await crud.get_drugs(session=session))
+    return paginate(await crud.get_drugs(session=session, filter=filter))
+
+@router.get('/count-reception', response_model=List[dict])
+async def get_count_reception(
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+):
+    return await crud.get_count_recepctions(session=session)
 
 @router.get('/{drug_id}', response_model=DrugSchema)
 async def get_drug(

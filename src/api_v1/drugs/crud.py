@@ -1,15 +1,15 @@
 import uuid
 
-from sqlalchemy import select
+from sqlalchemy import select, or_, text
 from sqlalchemy.orm import selectinload
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
-
 from core.models.drug import DrugORM
 
 from .schemas import DrugCreateSchema, DrugUpdateSchema, DrugUpdatePartialSchema
 
-async def get_drugs(session: AsyncSession) -> list[DrugORM]:
+async def get_drugs(session: AsyncSession, filter: str) -> list[DrugORM]:
+    
     stmt = (
         select(DrugORM)
         .options(
@@ -17,10 +17,29 @@ async def get_drugs(session: AsyncSession) -> list[DrugORM]:
             selectinload(DrugORM.manufacturer)
             )
     )
+    if filter is not None and filter != 'null':
+        criteria = dict(x.split("*") for x in filter.split('-'))
+        print(criteria)
+        criteria_list = []
+
+        for attr, value in criteria.items():
+                search = '%{}%'.format(value)
+                criteria_list.append(getattr(DrugORM, attr).like(search))
+        
+        stmt = stmt.filter(or_(*criteria_list))
 
     result: Result = await session.execute(stmt)
     result_orm = result.scalars().all()
     return list(result_orm)
+
+async def get_count_recepctions(session: AsyncSession) -> list[DrugORM]:
+
+    result: Result = await session.execute(text('SELECT leave_condition, COUNT(*) AS count FROM drug GROUP BY leave_condition;'))
+    list = result.all()
+    converted_list = []
+    for item in list:
+        converted_list.append({item[0]: item[1]})
+    return converted_list
 
 async def get_drug(
         session: AsyncSession,

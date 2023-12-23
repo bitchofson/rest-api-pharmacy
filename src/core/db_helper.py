@@ -40,5 +40,5 @@ class DatabaseHelper:
 
 db_helper = DatabaseHelper(
     url=settings.database_url_asyncpg, 
-    echo=True
+    echo=False, 
 )
